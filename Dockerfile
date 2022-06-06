@@ -29,14 +29,20 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install grpcio-tools \
-    && pip3 install numpy \
+    && pip3 install vosk \
+	&& pip3 install grpcio \
+    && pip3 install grpcio-tools \
+	&& pip3 install regex \
+	&& pip3 install tqdm \
+	&& pip3 install numpy \
     && pip3 install torch \
     && pip3 install transformers \
-    && pip3 install vosk \
     && cd /opt/model \
     && rm -rf model/extra \
+	&& rm -rf model/decode.py \
+	&& rm -rf model/decoder-test.wav \
     && cd /opt/stt-server \
-    && python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. stt_service.proto
+    && python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. stt_service.proto \
     && rm -rf /root/.cache \
     && rm -rf /var/lib/apt/lists/*
     

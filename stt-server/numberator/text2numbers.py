@@ -1,4 +1,4 @@
-from ru import Russian
+from numberator.ru import Russian
 import numpy as np
 
 class TextToNumbers:

@@ -8,7 +8,7 @@ import stt_service_pb2_grpc
 
 server  = 'localhost:5001'
 
-ssl = True # Use SSL for connection  
+ssl = False # Use SSL for connection
 
 CHUNK_SIZE = 4000
 
@@ -37,7 +37,7 @@ def gen(audio_file_name):
 def run(audio_file_name):
 
     if ssl:
-        with open('certificate.pem') as f:
+        with open('certificate/certificate.pem') as f:
            certificate_chain = f.read().encode()
         client_creds = grpc.ssl_channel_credentials (certificate_chain)
         channel = grpc.secure_channel(server, client_creds)

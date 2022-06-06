@@ -1,0 +1,7 @@
+# Byte-compiled
+__pycache__/
+# Models
+model/
+checkpoint
+# Test-Files
+*.wav
