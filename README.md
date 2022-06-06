@@ -1,5 +1,5 @@
 # stt-grpc-server
-Simple TTS GRPC-server based on Vosk (https://github.com/alphacep/vosk-server).
+Simple TTS GRPC-server based on Vosk (https://github.com/alphacep/vosk-server). Many thanks to Nickolay V. Shmyrev.
 
 ## Prepare Models
 Download the language and punctuation models: https://alphacephei.com/vosk/models
