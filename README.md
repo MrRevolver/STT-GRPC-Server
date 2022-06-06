@@ -2,9 +2,9 @@
 Simple TTS GRPC-server based on Vosk (https://github.com/alphacep/vosk-server). Many thanks to Nickolay V. Shmyrev.
 
 ## Prepare Models
-Download the language and punctuation models: https://alphacephei.com/vosk/models
-Unzip lasnguage model to "model" folder
-Extract the "checkpoint" file from the punctuation model and place it in the "punctuator" folder
+1. Download the language and punctuation models: https://alphacephei.com/vosk/models
+2. Unzip lasnguage model to "model" folder
+3. Extract the "checkpoint" file from the punctuation model and place it in the "punctuator" folder
 
 ## Run
 Build the Docker container:
