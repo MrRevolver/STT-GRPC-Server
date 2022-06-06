@@ -33,24 +33,24 @@ from google.protobuf import duration_pb2
 
 from vosk import Model, KaldiRecognizer
 
-ssl = True   # Use SSL for connection  
+ssl = False   # Use SSL for connection  
 numb = True  # Convert numeral words to numbers
 punct = True # Use punctuation marks
 
 if numb:
-    from numberator.text2numbers import TextToNumbers
-    text2numbers = TextToNumbers()
+   from numberator.text2numbers import TextToNumbers
+   text2numbers = TextToNumbers()
 
 if punct:
-    from punctuator.recasepunc import CasePuncPredictor, WordpieceTokenizer, Config
-    predictor = CasePuncPredictor('punctuator/checkpoint', lang="ru")
+   from punctuator.recasepunc import CasePuncPredictor, WordpieceTokenizer, Config
+   predictor = CasePuncPredictor('punctuator/checkpoint', lang="ru")
 
 gc.set_threshold(0)
 
 vosk_interface = os.environ.get('VOSK_SERVER_INTERFACE', '0.0.0.0')
 vosk_port = int(os.environ.get('VOSK_SERVER_PORT', 5001))
 vosk_model_path = os.environ.get('VOSK_MODEL_PATH', 'model')
-vosk_sample_rate = float(os.environ.get('VOSK_SAMPLE_RATE', 8000))
+vosk_sample_rate = float(os.environ.get('VOSK_SAMPLE_RATE', 16000))
 
 if len(sys.argv) > 1:
    vosk_model_path = sys.argv[1]
@@ -75,18 +75,21 @@ class SttServiceServicer(stt_service_pb2_grpc.SttServiceServicer):
         results = ''
         words = [self.get_word_info(y) for y in x.get('result', [])]
         if 'confidence' in x:
-             conf = x['confidence']
+            conf = x['confidence']
         elif len(words) > 0:
-             confs = [w.confidence for w in words]
-             conf = sum(confs) / len(confs)
+            confs = [w.confidence for w in words]
+            conf = sum(confs) / len(confs)
         else:
-             conf = 1.0
+            conf = 1.0
 
         # Convert numeral words to numbers
-        numbertext = text2numbers.convert(x['text']) if self.spec.raw_results && numb else x['text']
+        if self.spec.raw_results and numb:
+            numbertext = text2numbers.convert(x['text'])
+        else:
+            numbertext = x['text']
         
         # Punctuation marks
-        if self.spec.automatic_punctuation && punct:
+        if self.spec.automatic_punctuation and punct:
             tokens = list(enumerate(predictor.tokenize(numbertext)))
             for token, case_label, punc_label in predictor.predict(tokens, lambda x: x[1]):
                     prediction = predictor.map_punc_label(predictor.map_case_label(token[1], case_label), punc_label)
@@ -94,7 +97,7 @@ class SttServiceServicer(stt_service_pb2_grpc.SttServiceServicer):
                        results = results + ' ' + prediction
                     else:
                        results = results + prediction
-            resulttext = results.strip();
+            resulttext = results.strip()
         else:
             resulttext = numbertext
         
@@ -105,7 +108,7 @@ class SttServiceServicer(stt_service_pb2_grpc.SttServiceServicer):
         res = json.loads(json_res)
 
         if 'partial' in res:
-             numbertext = text2numbers.convert(res['partial']) if self.spec.raw_results && numb else res['partial']
+             numbertext = text2numbers.convert(res['partial']) if self.spec.raw_results and numb else res['partial']
              alternatives = [stt_service_pb2.SpeechRecognitionAlternative(text=numbertext)]
              chunks = [stt_service_pb2.SpeechRecognitionChunk(alternatives=alternatives, final=False)]
              return stt_service_pb2.StreamingRecognitionResponse(chunks=chunks)
