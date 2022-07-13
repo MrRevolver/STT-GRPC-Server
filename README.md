@@ -1,4 +1,4 @@
-# stt-grpc-server
+# Simple TTS GRPC-server
 Simple TTS GRPC-server based on Vosk (https://github.com/alphacep/vosk-server). Many thanks to Nickolay V. Shmyrev.
 
 ## Prepare Models
